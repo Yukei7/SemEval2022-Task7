@@ -12,7 +12,7 @@ class BERT_based_classifier(torch.nn.Module):
                  basenet='bert',
                  bert_freeze=False,
                  temporal=False,
-                 n_outputs=2,
+                 n_outputs=3,
                  drop_out=0.2,
                  fc_dim=256,
                  lstm_dim=256,
@@ -139,14 +139,14 @@ class BERT_multitask_lstm_fc(BERT_based_classifier):
                                                      temporal=temporal,
                                                      bert_freeze=bert_freeze,
                                                      drop_out=drop_out,
-                                                     n_outputs=4,
+                                                     n_outputs=3,
                                                      fc_dim=fc_dim)
 
         self.classifier2_1 = torch.nn.Sequential(torch.nn.Linear(in_features=768, out_features=256),
                                                  torch.nn.ReLU(),
                                                  torch.nn.Dropout(p=drop_out))
 
-        self.classifier2_2 = torch.nn.Sequential(torch.nn.Linear(in_features=fc_dim, out_features=2))
+        self.classifier2_2 = torch.nn.Sequential(torch.nn.Linear(in_features=fc_dim, out_features=1))
 
     def forward(self, input_id, mask_id, token_type_id, go_input_id=None, go_mask_id=None):
 
@@ -163,7 +163,7 @@ class BERT_multitask_lstm_fc(BERT_based_classifier):
         output1 = self.classifier(feat1)
         output2 = self.classifier2_2(feat2)
 
-        # torch.Size([128, 4]) torch.Size([128, 2]) torch.Size([128, 6])
+        # torch.Size([128, 3]) torch.Size([128, 1]) torch.Size([128, 4])
         output = torch.cat((output1, output2), dim=1)
 
         return output

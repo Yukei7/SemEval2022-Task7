@@ -46,7 +46,8 @@ def train(args, device):
     # TODO: resume training
     start_epoch = 0
 
-    save_dir = os.path.join('model_weights', f"{args.basenet}")
+    model.to(device)
+    save_dir = os.path.join('model_weights', f"{args['basenet']}")
     writer = SummaryWriter(log_dir=save_dir)
 
     # start
@@ -60,7 +61,9 @@ def train(args, device):
         writer.add_scalar("Loss/train", train_loss, ep)
         writer.add_scalar("Loss/val", val_loss, ep)
         writer.add_scalar("Classification_acc/val", metrics[0], ep)
-        writer.add_scalar("Classification_f1/val", metrics[1], ep)
+        writer.add_scalar("Classification_f1_0/val", metrics[1][0], ep)
+        writer.add_scalar("Classification_f1_1/val", metrics[1][1], ep)
+        writer.add_scalar("Classification_f1_2/val", metrics[1][2], ep)
         writer.add_scalar("Score_mse/val", metrics[2], ep)
         writer.add_scalar("Score_spearm/val", metrics[3], ep)
 
@@ -70,24 +73,25 @@ def train(args, device):
 
         logging.info(f"Ep: {ep}\t Lr: {get_lr(optimizer):.6f}\t Train Loss: {train_loss:.4f}\t "
                      f"Val Loss: {val_loss:.4f}\t "
-                     f"Val: Classification(acc/f1): {metrics[0]:.4f}/{metrics[1]}, "
+                     f"Val: Classification(acc/f1_0): {metrics[0]:.4f}/{metrics[1][0]}, "
+                     f"Val: Classification(acc/f1_1): {metrics[0]:.4f}/{metrics[1][1]}, "
+                     f"Val: Classification(acc/f1_2): {metrics[0]:.4f}/{metrics[1][2]}, "
                      f"Score(mse/spearm): {metrics[2]:.4f}/{metrics[3]:.4f}")
 
     print_header("Testing on the Validation set")
     val_loss, metrics = epoch_val(model, valDataloader, device)
     logging.info(f"Val Loss: {val_loss:.4f}\t "
-                 f"Val: Classification(acc/f1): {metrics[0]:.4f}/{metrics[1]}, "
+                 f"Val: Classification(acc/f1_0): {metrics[0]:.4f}/{metrics[1][0]}, "
+                 f"Val: Classification(acc/f1_1): {metrics[0]:.4f}/{metrics[1][1]}, "
+                 f"Val: Classification(acc/f1_2): {metrics[0]:.4f}/{metrics[1][2]}, "
                  f"Score(mse/spearm): {metrics[2]:.4f}/{metrics[3]:.4f}")
 
 
 def concat_output(output, device):
     temp = torch.tensor([]).to(device)
-    if output.shape[1] == 2:
-        temp = torch.argmax(output[:, 0:2], dim=1).view(-1, 1)
-        return temp
 
-    temp = torch.argmax(output[:, 0:2], dim=1).view(-1, 1)
-    temp = torch.cat((temp, output[:, 2].view(-1, 1)), dim=1)
+    temp = torch.argmax(output[:, 0:3], dim=1).view(-1, 1)
+    temp = torch.cat((temp, output[:, 3].view(-1, 1)), dim=1)
 
     return temp
 
@@ -95,8 +99,11 @@ def concat_output(output, device):
 def loss_func(output, target, device):
     target = target.float()
 
-    loss_classification = CrossEntropyLoss(output[:, 0:2], target[:, 0].long())
-    loss_regression = MSELoss(output[:, 2], target[:, 1])
+    ce_loss = CrossEntropyLoss()
+    mse_loss = MSELoss()
+
+    loss_classification = ce_loss(output[:, 0:3], target[:, 0].long())
+    loss_regression = mse_loss(output[:, 3], target[:, 1])
     loss = loss_classification + loss_regression
 
     # label output

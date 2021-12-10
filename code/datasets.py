@@ -28,9 +28,9 @@ class wikiHowDataset(Dataset):
         assert phase in ["train", "dev"]
 
         # get instance path
-        is_test = args["phase"] == "test"
+        self.is_test = args["phase"] == "test"
 
-        instance_path = args["path_to_dev"] if is_test else args["path_to_train"]
+        instance_path = args["path_to_test"] if self.is_test else args["path_to_" + phase]
 
         if stop_words:
             self.stop_words = set(stopwords.words('english'))
@@ -39,7 +39,7 @@ class wikiHowDataset(Dataset):
         # load instances
         self.data = self.retrieve_instances_from_dataset(instance_path)
 
-        if not is_test:
+        if not self.is_test:
             ranking_path = args["path_to_" + phase + "_labels"]["ranking"]
             classification_path = args["path_to_" + phase + "_labels"]["classification"]
             if self.task == "ranking" or self.task == "multi":
