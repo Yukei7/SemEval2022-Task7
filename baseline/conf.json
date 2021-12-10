@@ -1,0 +1,18 @@
+{
+  "subtask": "ranking",
+  "path_to_train": "../data/ClarificationTask_TrainData_Sep23.tsv",
+  "path_to_dev": "../data/ClarificationTask_DevData_Oct22a.tsv",
+  "path_to_training_labels": {
+    "classification": "../data/ClarificationTask_TrainLabels_Sep23.tsv",
+    "ranking": "../data/ClarificationTask_TrainScores_Nov11.tsv"
+  },
+  "path_to_dev_labels": {
+    "classification": "../data/ClarificationTask_DevLabels_Oct22a.tsv",
+    "ranking": "../data/ClarificationTask_DevScores_Oct22a.tsv"
+  },
+  "path_to_predictions": {
+    "classification": "../pred/classification/",
+    "ranking": "../pred/ranking/"
+  },
+  "embedding": "bag-of-words"
+}
