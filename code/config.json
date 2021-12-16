@@ -21,8 +21,8 @@
     "ranking": "../pred/ranking/"
   },
   "n_epochs": 5,
-  "lr": 1e-5,
-  "bs": 16,
+  "lr": 2e-5,
+  "bs": 24,
   "glove_path": "../data/glove/glove.twitter.27B.100d.txt",
   "glove_embedding_size": 100,
   "basenet": "bert"

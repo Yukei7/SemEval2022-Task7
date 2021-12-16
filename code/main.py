@@ -8,7 +8,7 @@ from utils import print_header
 
 def main(args):
 
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
 
     # gpu setting
     use_cuda = torch.cuda.is_available()
@@ -21,13 +21,13 @@ def main(args):
         torch.backends.cudnn.benchmark = True
     np.random.seed(args["seed"])
 
-    logging.debug(f"Device: {str(device)}; Seed: {args['seed']}")
+    logging.info(f"Device: {str(device)}; Seed: {args['seed']}")
 
     ##############
     phase = args["phase"]
 
     assert phase in ["train", "test"]
-    logging.debug(f"Subtask: {args['subtask']}, {phase} phase")
+    logging.info(f"Subtask: {args['subtask']}, {phase} phase")
 
     if phase == "train":
         train(args, device)

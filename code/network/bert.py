@@ -93,30 +93,30 @@ class BERT_based_classifier(torch.nn.Module):
         return feat
 
 
-class BERT_multitask_fc(BERT_based_classifier):
-    """
-    LLM embeddings followed by one/two FC layer with MCE/CE loss
+# class BERT_multitask_fc(BERT_based_classifier):
+#     """
+#     LLM embeddings followed by one/two FC layer with MCE/CE loss
 
-    if one_layer:
-        basenet -> FC -> MSE/CE
-    else:
-        basenet -> FC   -> ReLU -> Dropout -> FC -> MSE + CE
-    """
+#     if one_layer:
+#         basenet -> FC -> MSE/CE
+#     else:
+#         basenet -> FC   -> ReLU -> Dropout -> FC -> MSE + CE
+#     """
 
-    def __init__(self,
-                 temporal=False,
-                 n_outputs=6,
-                 fc_dim=256,
-                 one_layer=False):
-        super(BERT_multitask_fc, self).__init__(temporal=temporal,
-                                                n_outputs=n_outputs,
-                                                fc_dim=fc_dim,
-                                                one_layer=one_layer)
+#     def __init__(self,
+#                  temporal=False,
+#                  n_outputs=6,
+#                  fc_dim=256,
+#                  one_layer=False):
+#         super(BERT_multitask_fc, self).__init__(temporal=temporal,
+#                                                 n_outputs=n_outputs,
+#                                                 fc_dim=fc_dim,
+#                                                 one_layer=one_layer)
 
-    def forward(self, input_id, mask_id, token_type_id, go_input_id=None, go_mask_id=None):
-        feat = super(BERT_multitask_fc, self).forward(input_id, mask_id, token_type_id)  # torch.Size([64, 256])
-        output = self.classifier(feat)
-        return output
+#     def forward(self, input_id, mask_id, token_type_id, go_input_id=None, go_mask_id=None):
+#         feat = super(BERT_multitask_fc, self).forward(input_id, mask_id, token_type_id)  # torch.Size([64, 256])
+#         output = self.classifier(feat)
+#         return output
 
 
 class BERT_multitask_lstm_fc(BERT_based_classifier):

@@ -79,7 +79,7 @@ def train(args, device):
                      f"Score(mse/spearm): {metrics[2]:.4f}/{metrics[3]:.4f}")
 
     print_header("Testing on the Validation set")
-    val_loss, metrics = epoch_val(model, valDataloader, device)
+    val_loss, metrics = epoch_val(model, valDataloader, device, args["basenet"])
     logging.info(f"Val Loss: {val_loss:.4f}\t "
                  f"Val: Classification(acc/f1_0): {metrics[0]:.4f}/{metrics[1][0]}, "
                  f"Val: Classification(acc/f1_1): {metrics[0]:.4f}/{metrics[1][1]}, "

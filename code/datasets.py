@@ -122,7 +122,6 @@ class wikiHowDataset(Dataset):
         ids = []
         instances = []
 
-        # TODO: Previous + sentence + follow-up
         for _, row in df.iterrows():
             # fill the blank with the fillers
             # generate id formatted as: "DataID_FillerID" (str)
@@ -136,11 +135,18 @@ class wikiHowDataset(Dataset):
                 sent_with_filler = row["Sentence"].replace(
                     "______", row[f"Filler{filler_index}"]
                 )
+                title_txt = row["Article title"]
+                section_txt = row["Section header"]
                 previous_txt = self.text_cleaning(previous_txt)
                 follow_txt = self.text_cleaning(follow_txt)
                 sent_with_filler = self.text_cleaning(sent_with_filler)
 
-                instances.append(previous_txt + sent_with_filler + follow_txt)
+                txt_list = [title_txt, section_txt, previous_txt, sent_with_filler, follow_txt]
+                instance = ""
+                for t in txt_list:
+                  if (len(t) > 0):
+                    instance = instance + " " + t
+                instances.append(instance)
 
         output = pd.DataFrame({"id": ids, "instances": instances})
 
